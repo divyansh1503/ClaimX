@@ -34,7 +34,7 @@ DSLib is a console program (C++17, standard library only) that fixes this:
 - Report lost / found items (duplicate or empty IDs are rejected)
 - Search by ID (hash table)
 - View items by priority: High (ID card, key), Medium (wallet, phone, laptop, charger...), Low (everything else)
-- Match suggestions with a score (exact matching in Part 1, Levenshtein in Part 2)
+- Match suggestions with a score
 - Prefix search on words in reports (trie)
 - Browse by category or location (hash index written in C)
 - Claim submission with private-detail answer check
