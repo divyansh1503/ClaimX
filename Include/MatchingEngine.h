@@ -1,8 +1,4 @@
 #pragma once
-// Suggests FOUND items for a LOST report.
-// CURRENT VERSION: compares category, name, colour, location and description.
-// Only EXACT matches (ignoring case/spaces/punctuation) count.
-// score = (matching fields / 5) * 100. A found item is suggested at >= 45%.
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -10,8 +6,8 @@
 
 struct MatchResult {
     const FoundItem* found;
-    double score;      // 0..100
-    std::string note;  // extra info shown next to the suggestion
+    double score;      
+    std::string note;  
 };
 
 class MatchingEngine {
