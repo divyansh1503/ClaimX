@@ -1,6 +1,3 @@
-## `include/Item.h`
-
-```cpp
 #pragma once
 // Item (abstract base) + LostItem + FoundItem, so both kinds of record
 // can be handled through one pointer type (Item*).
@@ -55,6 +52,7 @@ public:
     virtual std::string type() const = 0;           // "LOST" or "FOUND"
     virtual std::string reporterLabel() const = 0;  // "Owner" or "Finder"
 
+    // FULL details - meant for the admin only.
     virtual void display() const {
         std::cout << "[" << type() << "] ID: " << id_
                   << " | Priority: " << priorityToString(priority_) << "\n"
@@ -62,6 +60,16 @@ public:
                   << "   Colour: " << color_ << " | Location: " << location_ << "\n"
                   << "   Description: " << description_ << "\n"
                   << "   " << reporterLabel() << ": " << reporter_ << "\n";
+    }
+
+    // What ANY student may see: no colour, no description, no reporter name.
+    // (Those are exactly the things someone would need to fake a claim.)
+    virtual void displayPublic() const {
+        std::cout << "[" << type() << "] ID: " << id_
+                  << " | Priority: " << priorityToString(priority_) << "\n"
+                  << "   Item: " << name_ << " (" << category_ << ")\n"
+                  << "   Location: " << location_ << "\n"
+                  << "   (colour, description and reporter name are hidden)\n";
     }
 
     // One tab-separated line for items.txt
@@ -107,4 +115,3 @@ inline Item* makeItemFromFields(const std::vector<std::string>& f) {
     it->setPriority(priorityFromString(f[7]));
     return it;
 }
-```
