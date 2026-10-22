@@ -1,12 +1,28 @@
 #pragma once
 // Small helpers shared by every module (string cleanup + safe console input).
-#include <algorithm>
 #include <cctype>
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sys/stat.h>   // mkdir
+#ifdef _WIN32
+#include <direct.h>     // _mkdir on Windows
+#endif
 
 namespace util {
+
+inline void makeDirectory(const std::string& dir) {
+#ifdef _WIN32
+    _mkdir(dir.c_str());
+#else
+    mkdir(dir.c_str(), 0755);
+#endif
+}
+
+inline void ensureParentDir(const std::string& file) {
+    size_t pos = file.find_last_of("/\\");
+    if (pos != std::string::npos) makeDirectory(file.substr(0, pos));
+}
 
 inline std::string lower(std::string s) {
     for (char& c : s) c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
@@ -74,4 +90,4 @@ inline int readInt(const std::string& prompt, int lo, int hi) {
     return lo;
 }
 
-}  
+}  // namespace util
