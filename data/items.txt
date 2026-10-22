@@ -1,0 +1,12 @@
+LOST	L001	Black Backpack	bag	black	Hostel A	scratch on front pocket	Low	Sharmistha Anand
+FOUND	F001	Black Backpack	bag	black	Hostel A	scratch on front pocket	Low	Anushka Yadav
+LOST	L002	Hostel Room Key	key	silver	Mess	blue tag keychain	High	Rahul Sharma
+FOUND	F002	Hostel Room Key	key	silver	Mess	blue tag keychain	High	Divyansh Mishra
+LOST	L003	Student ID Card	ID card	white	Library	photo with blue lanyard	High	Priya Singh
+FOUND	F003	Student ID Card	ID card	white	Library	photo with blue lanyard	High	Sudiksha Deshwal
+LOST	L004	Samsung Phone	phone	black	Canteen	cracked screen guard	Medium	Aman Verma
+FOUND	F004	Samsung Phone	phone	blue	Canteen	cracked screen guard	Medium	Neha Gupta
+LOST	L005	Casio Calculator	calculator	black	Library	scientific fx-991	Low	Karan Mehta
+FOUND	F005	Water Bottle	bottle	green	Gym	steel bottle with sticker	Low	Rohit Negi
+LOST	L006	Laptop Charger	charger	white	Hostel B	frayed cable near plug	Medium	Ishita Rawat
+FOUND	F006	Laptop Charger	charger	white	Hostel B	frayed cable near plug	Medium	Ankit Joshi
