@@ -12,10 +12,14 @@ void mergeSortRec(std::vector<T>& v, std::vector<T>& tmp, size_t lo, size_t hi, 
     mergeSortRec(v, tmp, lo, mid, less);
     mergeSortRec(v, tmp, mid, hi, less);
     size_t i = lo, j = mid, k = lo;
-    while (i < mid && j < hi) tmp[k++] = less(v[j], v[i]) ? v[j++] : v[i++];
-    while (i < mid) tmp[k++] = v[i++];
-    while (j < hi) tmp[k++] = v[j++];
-    for (size_t x = lo; x < hi; ++x) v[x] = tmp[x];
+    while (i < mid && j < hi) 
+        tmp[k++] = less(v[j], v[i]) ? v[j++] : v[i++];
+    while (i < mid) 
+        tmp[k++] = v[i++];
+    while (j < hi) 
+        tmp[k++] = v[j++];
+    for (size_t x = lo; x < hi; ++x) 
+        v[x] = tmp[x];
 }
 
 template <typename T, typename Less>
@@ -24,9 +28,13 @@ void quickSortRec(std::vector<T>& v, int lo, int hi, Less less) {
     T pivot = v[lo + (hi - lo) / 2];
     int i = lo, j = hi;
     while (i <= j) {
-        while (less(v[i], pivot)) i++;
-        while (less(pivot, v[j])) j--;
-        if (i <= j) { std::swap(v[i], v[j]); i++; j--; }
+        while (less(v[i], pivot)) 
+            i++;
+        while (less(pivot, v[j])) 
+            j--;
+        if (i <= j) { 
+            std::swap(v[i], v[j]); i++; j--; 
+        }
     }
     quickSortRec(v, lo, j, less);
     quickSortRec(v, i, hi, less);
@@ -35,7 +43,8 @@ void quickSortRec(std::vector<T>& v, int lo, int hi, Less less) {
 
 template <typename T, typename Less>
 void quickSort(std::vector<T>& v, Less less) {
-    if (v.size() > 1) detail::quickSortRec(v, 0, static_cast<int>(v.size()) - 1, less);
+    if (v.size() > 1) 
+        detail::quickSortRec(v, 0, static_cast<int>(v.size()) - 1, less);
 }
 
 template <typename T, typename Key, typename GetKey>
@@ -44,11 +53,16 @@ int binarySearch(const std::vector<T>& v, const Key& key, GetKey getKey, int* st
     while (lo <= hi) {
         int mid = lo + (hi - lo) / 2;
         ++count;
-        if (getKey(v[mid]) == key) { if (steps) *steps = count; return mid; }
-        if (getKey(v[mid]) < key) lo = mid + 1;
-        else hi = mid - 1;
+        if (getKey(v[mid]) == key) { 
+            if (steps) *steps = count; return mid; 
+        }
+        if (getKey(v[mid]) < key) 
+            lo = mid + 1;
+        else 
+            hi = mid - 1;
     }
-    if (steps) *steps = count;
+    if (steps) 
+        *steps = count;
     return -1;
 }
 
