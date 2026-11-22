@@ -1,6 +1,3 @@
-## `include/Item.h`
-
-```cpp
 #pragma once
 // Item (abstract base) + LostItem + FoundItem, so both kinds of record
 // can be handled through one pointer type (Item*).
@@ -41,6 +38,9 @@ class Item {
 protected:
     std::string id_, name_, category_, color_, location_, description_, reporter_;
     Priority priority_;
+    std::string privateDetail_;  // hidden detail only the real owner would know
+    std::string question_;       // follow-up question asked to a claimant (FOUND items)
+    std::string status_ = "OPEN";  // OPEN or CLAIMED
 
 public:
     Item(std::string id, std::string name, std::string category, std::string color,
@@ -55,20 +55,32 @@ public:
     virtual std::string type() const = 0;           // "LOST" or "FOUND"
     virtual std::string reporterLabel() const = 0;  // "Owner" or "Finder"
 
+    // FULL details - meant for the admin only.
     virtual void display() const {
         std::cout << "[" << type() << "] ID: " << id_
                   << " | Priority: " << priorityToString(priority_) << "\n"
                   << "   Item: " << name_ << " (" << category_ << ")\n"
                   << "   Colour: " << color_ << " | Location: " << location_ << "\n"
                   << "   Description: " << description_ << "\n"
-                  << "   " << reporterLabel() << ": " << reporter_ << "\n";
+                  << "   " << reporterLabel() << ": " << reporter_ << "\n"
+                  << "   Status: " << status_ << "\n";
+    }
+
+    // What ANY student may see: no colour, no description, no reporter name.
+    // (Those are exactly the things someone would need to fake a claim.)
+    virtual void displayPublic() const {
+        std::cout << "[" << type() << "] ID: " << id_
+                  << " | Priority: " << priorityToString(priority_) << "\n"
+                  << "   Item: " << name_ << " (" << category_ << ")\n"
+                  << "   Location: " << location_ << "\n"
+                  << "   (colour, description and reporter name are hidden)\n";
     }
 
     // One tab-separated line for items.txt
     virtual std::string serialize() const {
         return type() + "\t" + id_ + "\t" + name_ + "\t" + category_ + "\t" + color_ + "\t" +
                location_ + "\t" + description_ + "\t" + priorityToString(priority_) + "\t" +
-               reporter_;
+               reporter_ + "\t" + privateDetail_ + "\t" + question_ + "\t" + status_;
     }
 
     const std::string& id() const { return id_; }
@@ -80,6 +92,15 @@ public:
     const std::string& reporter() const { return reporter_; }
     Priority priority() const { return priority_; }
     void setPriority(Priority p) { priority_ = p; }
+
+    const std::string& privateDetail() const { return privateDetail_; }
+    const std::string& question() const { return question_; }
+    const std::string& status() const { return status_; }
+    void setPrivate(const std::string& detail, const std::string& question) {
+        privateDetail_ = detail;
+        question_ = question;
+    }
+    void setStatus(const std::string& s) { status_ = s; }
 };
 
 class LostItem : public Item {
@@ -105,6 +126,11 @@ inline Item* makeItemFromFields(const std::vector<std::string>& f) {
     else if (f[0] == "FOUND") it = new FoundItem(f[1], f[2], f[3], f[4], f[5], f[6], f[8]);
     else return nullptr;
     it->setPriority(priorityFromString(f[7]));
+    if (f.size() > 9)  it->setPrivate(f[9], f.size() > 10 ? f[10] : "");
+    if (f.size() > 11 && !f[11].empty()) it->setStatus(f[11]);
     return it;
+<<<<<<< HEAD
 }
-```
+=======
+}
+>>>>>>> 73a950c (Add claim verification fields to Item class)
