@@ -1,5 +1,5 @@
 #pragma once
-// Saves / loads all records to one text file (tab separated, one item per line).
+
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -21,7 +21,7 @@ public:
         return true;
     }
 
-    // Returns how many records were loaded (missing file = 0).
+    
     int load(ItemLinkedList& list) const {
         std::ifstream in(path_);
         if (!in) return 0;
