@@ -1,5 +1,5 @@
 #pragma once
-// A claim = "I think FOUND item X is mine" + the answer to the follow-up question.
+
 #include <string>
 #include <vector>
 #include "Utils.h"
@@ -8,8 +8,8 @@ enum class ClaimStatus { PENDING, FLAGGED, APPROVED, REJECTED };
 
 inline std::string claimStatusToString(ClaimStatus s) {
     switch (s) {
-        case ClaimStatus::PENDING:  return "PENDING";   // answer matched, waiting for admin
-        case ClaimStatus::FLAGGED:  return "FLAGGED";   // answer did not match, manual review
+        case ClaimStatus::PENDING:  return "PENDING";   
+        case ClaimStatus::FLAGGED:  return "FLAGGED";   
         case ClaimStatus::APPROVED: return "APPROVED";
         default:                    return "REJECTED";
     }
@@ -23,13 +23,13 @@ inline ClaimStatus claimStatusFromString(const std::string& s) {
 }
 
 struct Claim {
-    std::string id;       // C001, C002 ...
-    std::string itemId;   // the FOUND item being claimed
+    std::string id;       
+    std::string itemId;  
     std::string claimant;
-    std::string answer;   // answer to the follow-up question
+    std::string answer;   
     ClaimStatus status = ClaimStatus::PENDING;
-    int similarityPct = 0;  // how close the answer was to the private detail
-    int seq = 0;            // arrival order
+    int similarityPct = 0;  
+    int seq = 0;           
     std::string adminNote;
 
     bool isOpen() const { return status == ClaimStatus::PENDING || status == ClaimStatus::FLAGGED; }
