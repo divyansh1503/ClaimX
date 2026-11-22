@@ -1,10 +1,5 @@
 #pragma once
-// ClaimManager = everything that is still "pending" from the Phase-II report:
-//   private detail + follow-up question, claim submission and answer check (Levenshtein),
-//   trie word search, category/location hash index, admin login,
-//   claim priority queue (ID cards & keys first), approve / reject,
-//   stack log of admin decisions (+ undo), sorting for admin views,
-//   statistics dashboard, and save / reload of claims and decisions.
+
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
@@ -25,23 +20,23 @@
 #include "stack.h"
 
 class ClaimManager {
-    // demo admin account (a real system would not hard-code this)
+   
     static constexpr const char* ADMIN_USER = "admin";
     static constexpr const char* ADMIN_PASS = "geu@2026";
 
     LostFoundSystem& sys_;
-    ItemIndex index_;   // hash table (C): category / location -> item IDs
-    Trie trie_;         // prefix search over words in the reports
+    ItemIndex index_;   
+    Trie trie_;         
     std::vector<Claim> claims_;
-    Stack* log_;        // stack (C): admin decisions, newest on top
+    Stack* log_;        
     std::string claimsFile_, decisionsFile_;
     int nextSeq_ = 1;
 
-    // ---- claim priority queue: ID cards/keys first, then oldest claim first ----
+ 
     struct QEntry { int prio; int seq; std::string claimId; };
     struct QCmp {
         bool operator()(const QEntry& a, const QEntry& b) const {
-            if (a.prio != b.prio) return a.prio > b.prio;  // smaller prio value = higher priority
+            if (a.prio != b.prio) return a.prio > b.prio;  
             return a.seq > b.seq;
         }
     };
@@ -385,7 +380,7 @@ public:
         std::cout << "Undid the decision on " << c->id << "; the claim is back in the queue.\n";
     }
 
-    // ================= sorting for admin views =================
+    
     void sortedViews() {
         std::cout << "\n 1. Items by priority\n 2. Items by name (A-Z)\n 3. Items by ID\n"
                   << " 4. Claims by answer match (best first)\n"
@@ -402,8 +397,7 @@ public:
         std::vector<Item*> v;
         for (const ListNode* p = sys_.items().head(); p; p = p->next) v.push_back(p->item);
         if (v.empty()) { std::cout << "No items yet.\n"; return; }
-        // merge sort for priority (it is STABLE: same-priority items keep their order);
-        // quick sort for name / ID (keys are different, so stability does not matter)
+        
         if (k == 1)
             sorting::mergeSort(v, [](const Item* a, const Item* b) { return a->priority() < b->priority(); });
         else if (k == 2)
@@ -411,7 +405,7 @@ public:
         else
             sorting::quickSort(v, [](const Item* a, const Item* b) { return a->id() < b->id(); });
 
-        if (k == 5) {  // binary search needs the list sorted by ID (done just above)
+        if (k == 5) {  
             std::string id = util::readNonEmpty("Item ID to find: ");
             int steps = 0;
             int pos = sorting::binarySearch(v, id, [](const Item* a) { return a->id(); }, &steps);
@@ -427,7 +421,7 @@ public:
                       << " | " << it->name() << " (" << it->category() << ") | " << it->status() << "\n";
     }
 
-    // ================= statistics dashboard =================
+    
     static void printTop(const char* title, std::vector<std::pair<std::string, int>> v) {
         sorting::mergeSort(v, [](const std::pair<std::string, int>& a, const std::pair<std::string, int>& b) {
             return a.second > b.second;
