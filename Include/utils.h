@@ -1,10 +1,10 @@
 #pragma once
-// Small helpers shared by every module (string cleanup + safe console input).
-#include <algorithm>
 #include <cctype>
 #include <iostream>
 #include <string>
-#include <vector>
+#include <vector> 
+#include<algorithm>
+
 
 namespace util {
 
@@ -20,8 +20,6 @@ inline std::string trim(const std::string& s) {
     return s.substr(a, b - a + 1);
 }
 
-// Keeps only letters/digits in lower case: "Black  Bag" -> "blackbag".
-// Makes comparison ignore case, spacing and punctuation.
 inline std::string normalize(const std::string& s) {
     std::string out;
     for (char c : s)
@@ -30,19 +28,20 @@ inline std::string normalize(const std::string& s) {
     return out;
 }
 
-// Splits on a delimiter and KEEPS empty fields (needed for the tab-separated file).
 inline std::vector<std::string> split(const std::string& s, char delim) {
     std::vector<std::string> parts;
     std::string cur;
     for (char c : s) {
-        if (c == delim) { parts.push_back(cur); cur.clear(); }
-        else cur += c;
+        if (c == delim) { 
+            parts.push_back(cur); cur.clear(); 
+        }
+        else 
+            cur += c;
     }
     parts.push_back(cur);
     return parts;
 }
 
-// Reads one line. Tabs are replaced by spaces because '\t' is our file separator.
 inline std::string readLine(const std::string& prompt) {
     std::cout << prompt;
     std::string s;
@@ -54,20 +53,21 @@ inline std::string readLine(const std::string& prompt) {
 inline std::string readNonEmpty(const std::string& prompt) {
     while (std::cin) {
         std::string s = readLine(prompt);
-        if (!s.empty()) return s;
+        if (!s.empty()) 
+            return s;
         std::cout << "  Input cannot be empty.\n";
     }
     return "";
 }
 
-// Reads an integer in [lo, hi]. If input ends (EOF) it returns lo.
 inline int readInt(const std::string& prompt, int lo, int hi) {
     while (std::cin) {
         std::string s = readLine(prompt);
         try {
             size_t pos = 0;
             int v = std::stoi(s, &pos);
-            if (pos == s.size() && v >= lo && v <= hi) return v;
+            if (pos == s.size() && v >= lo && v <= hi) 
+                return v;
         } catch (...) {}
         std::cout << "  Please enter a number between " << lo << " and " << hi << ".\n";
     }
