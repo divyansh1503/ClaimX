@@ -42,7 +42,7 @@ class ClaimManager {
     };
     std::priority_queue<QEntry, std::vector<QEntry>, QCmp> queue_;
 
-    // ================= small helpers =================
+    
     Claim* findClaim(const std::string& id) {
         for (auto& c : claims_) if (c.id == id) return &c;
         return nullptr;
@@ -95,7 +95,6 @@ class ClaimManager {
                   << " | " << claimStatusToString(c.status) << " | answer match " << c.similarityPct << "%\n";
     }
 
-    // ================= persistence =================
     void saveClaims() const {
         ensureDir(claimsFile_);
         std::ofstream out(claimsFile_, std::ios::trunc);
@@ -109,8 +108,8 @@ class ClaimManager {
     void saveDecisions() const {
         ensureDir(decisionsFile_);
         std::vector<Decision> v;
-        stack_foreach(log_, collectDecisionCb, &v);  // newest -> oldest
-        std::reverse(v.begin(), v.end());            // write oldest first
+        stack_foreach(log_, collectDecisionCb, &v);  
+        std::reverse(v.begin(), v.end());            
         std::ofstream out(decisionsFile_, std::ios::trunc);
         for (const auto& d : v)
             out << d.claimId << "\t" << d.itemId << "\t" << d.claimant << "\t" << d.admin << "\t"
@@ -193,7 +192,7 @@ public:
         sys_.addMenuOption("Admin panel (login required)", [this] { adminPanel(); });
     }
 
-    // ================= private detail (called while a report is being added) =================
+    
     void onItemAdded(Item* it) {
         std::cout << "\n--- Private detail (kept hidden, never shown to other students) ---\n";
         std::string detail = util::readNonEmpty("Private detail (e.g. scratch on back cover, red rubber band): ");
@@ -204,7 +203,7 @@ public:
         indexItem(it);
     }
 
-    // ================= student: claim =================
+    
     void submitClaim() {
         std::cout << "\n--- Claim a found item ---\n";
         std::string claimant = util::readNonEmpty("Your name: ");
@@ -250,7 +249,7 @@ public:
                       << "It is NOT rejected - it is flagged for manual review by the admin.\n";
     }
 
-    // ================= search / browse =================
+    
     void searchPrefix() const {
         std::string word = util::readNonEmpty("Type the start of a word (e.g. bac): ");
         auto ids = trie_.searchPrefix(word);
@@ -267,7 +266,7 @@ public:
         for (const auto& id : ids) if (Item* it = sys_.findById(id)) it->display();
     }
 
-    // ================= admin =================
+    
     bool login() const {
         for (int attempt = 1; attempt <= 3; ++attempt) {
             std::string u = util::readLine("Admin username: ");
