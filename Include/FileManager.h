@@ -1,16 +1,12 @@
 #pragma once
-
 #include <filesystem>
 #include <fstream>
 #include <string>
 #include "ItemLinkedList.h"
-
 class FileManager {
     std::string path_;
-
 public:
     explicit FileManager(std::string path = "data/items.txt") : path_(std::move(path)) {}
-
     bool save(const ItemLinkedList& list) const {
         std::filesystem::path p(path_);
         if (p.has_parent_path()) std::filesystem::create_directories(p.parent_path());
@@ -20,8 +16,6 @@ public:
             out << n->item->serialize() << "\n";
         return true;
     }
-
-    
     int load(ItemLinkedList& list) const {
         std::ifstream in(path_);
         if (!in) return 0;
