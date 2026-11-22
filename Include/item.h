@@ -1,6 +1,4 @@
 #pragma once
-// Item (abstract base) + LostItem + FoundItem, so both kinds of record
-// can be handled through one pointer type (Item*).
 #include <iostream>
 #include <string>
 #include <vector>
@@ -65,7 +63,6 @@ public:
                   << "   Status: " << status_ << "\n";
     }
 
-    // One tab-separated line for items.txt
     virtual std::string serialize() const {
         return type() + "\t" + id_ + "\t" + name_ + "\t" + category_ + "\t" + color_ + "\t" +
                location_ + "\t" + description_ + "\t" + priorityToString(priority_) + "\t" +
@@ -106,8 +103,6 @@ public:
     std::string reporterLabel() const override { return "Finder"; }
 };
 
-// Builds an item from one line of items.txt (already split on '\t').
-// Returns nullptr if the line is malformed.
 inline Item* makeItemFromFields(const std::vector<std::string>& f) {
     if (f.size() < 9) return nullptr;
     Item* it = nullptr;
