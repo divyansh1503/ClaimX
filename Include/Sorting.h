@@ -22,6 +22,8 @@ void mergeSortRec(std::vector<T>& v, std::vector<T>& tmp, size_t lo, size_t hi, 
         v[x] = tmp[x];
 }
 
+
+// Quick sort: pick the middle element as pivot, put smaller ones left, bigger ones right.
 template <typename T, typename Less>
 void quickSortRec(std::vector<T>& v, int lo, int hi, Less less) {
     if (lo >= hi) return;
@@ -54,7 +56,9 @@ int binarySearch(const std::vector<T>& v, const Key& key, GetKey getKey, int* st
         int mid = lo + (hi - lo) / 2;
         ++count;
         if (getKey(v[mid]) == key) { 
-            if (steps) *steps = count; return mid; 
+            if (steps) 
+                *steps = count; 
+            return mid; 
         }
         if (getKey(v[mid]) < key) 
             lo = mid + 1;
