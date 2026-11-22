@@ -55,7 +55,6 @@ public:
     virtual std::string type() const = 0;           // "LOST" or "FOUND"
     virtual std::string reporterLabel() const = 0;  // "Owner" or "Finder"
 
-    // FULL details - meant for the admin only.
     virtual void display() const {
         std::cout << "[" << type() << "] ID: " << id_
                   << " | Priority: " << priorityToString(priority_) << "\n"
@@ -64,16 +63,6 @@ public:
                   << "   Description: " << description_ << "\n"
                   << "   " << reporterLabel() << ": " << reporter_ << "\n"
                   << "   Status: " << status_ << "\n";
-    }
-
-    // What ANY student may see: no colour, no description, no reporter name.
-    // (Those are exactly the things someone would need to fake a claim.)
-    virtual void displayPublic() const {
-        std::cout << "[" << type() << "] ID: " << id_
-                  << " | Priority: " << priorityToString(priority_) << "\n"
-                  << "   Item: " << name_ << " (" << category_ << ")\n"
-                  << "   Location: " << location_ << "\n"
-                  << "   (colour, description and reporter name are hidden)\n";
     }
 
     // One tab-separated line for items.txt
@@ -129,8 +118,4 @@ inline Item* makeItemFromFields(const std::vector<std::string>& f) {
     if (f.size() > 9)  it->setPrivate(f[9], f.size() > 10 ? f[10] : "");
     if (f.size() > 11 && !f[11].empty()) it->setStatus(f[11]);
     return it;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 73a950c (Add claim verification fields to Item class)
