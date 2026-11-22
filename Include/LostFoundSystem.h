@@ -1,6 +1,4 @@
 #pragma once
-// LostFoundSystem: owns the data, runs the menu and connects the other classes.
-// Extra modules (claims, admin ...) plug in with addMenuOption() / setOnItemAdded().
 #include <functional>
 #include <queue>
 #include <string>
@@ -15,7 +13,7 @@
 
 class LostFoundSystem {
     ItemLinkedList list_;
-    std::unordered_map<std::string, Item*> idIndex_;  // hash table: ID -> item (list owns the item)
+    std::unordered_map<std::string, Item*> idIndex_;  
     MatchingEngine engine_;
     FileManager files_;
     std::function<void(Item*)> onItemAdded_;
@@ -24,20 +22,19 @@ class LostFoundSystem {
 public:
     explicit LostFoundSystem(const std::string& file = "data/items.txt") : files_(file) {}
 
-    // ---------- plug-in points ----------
+
     void addMenuOption(const std::string& label, std::function<void()> fn) {
         extraMenu_.emplace_back(label, std::move(fn));
     }
     void setOnItemAdded(std::function<void(Item*)> fn) { onItemAdded_ = std::move(fn); }
 
-    // ---------- data access ----------
     const ItemLinkedList& items() const { return list_; }
     Item* findById(const std::string& id) const {
         auto it = idIndex_.find(id);
         return it == idIndex_.end() ? nullptr : it->second;
     }
 
-    // ---------- persistence ----------
+  
     void load() {
         int n = files_.load(list_);
         for (const ListNode* p = list_.head(); p; p = p->next) idIndex_[p->item->id()] = p->item;
@@ -47,8 +44,7 @@ public:
         if (!files_.save(list_)) std::cout << "Warning: could not save items file.\n";
     }
 
-    // ---------- features ----------
-    // Interactive. Returns the new item, or nullptr if rejected.
+   
     Item* addItem(bool isLost) {
         std::cout << "\n--- Report a " << (isLost ? "LOST" : "FOUND") << " item ---\n";
         std::string id = util::readLine("Item ID (unique, e.g. " + std::string(isLost ? "L001" : "F001") + "): ");
@@ -66,7 +62,7 @@ public:
                           : static_cast<Item*>(new FoundItem(id, name, category, color, location, desc, who));
         list_.add(it);
         idIndex_[id] = it;
-        if (onItemAdded_) onItemAdded_(it);  // extra modules can ask more questions here
+        if (onItemAdded_) onItemAdded_(it);  
         save();
         std::cout << "Report saved. Priority: " << priorityToString(it->priority()) << "\n";
         return it;
@@ -130,7 +126,7 @@ public:
             sorting::mergeSort(v, [](const Item* a, const Item* b) { return a->priority() < b->priority(); });
         else if (k == 2)
             sorting::quickSort(v, [](const Item* a, const Item* b) { return util::lower(a->name()) < util::lower(b->name()); });
-        else  // 3 and 4 both need the list sorted by ID
+        else  
             sorting::quickSort(v, [](const Item* a, const Item* b) { return a->id() < b->id(); });
 
         if (k == 4) {
@@ -151,8 +147,7 @@ public:
                       << " | " << it->name() << " (" << it->category() << ")\n";
     }
 
-    // Sorted views: merge sort (stable) for priority, quick sort for name / ID,
-    // and binary search, which needs the list to be sorted by ID first.
+
     void sortedView() const {
         std::vector<Item*> v;
         for (const ListNode* p = list_.head(); p; p = p->next) v.push_back(p->item);
@@ -166,7 +161,7 @@ public:
             sorting::mergeSort(v, [](const Item* a, const Item* b) { return a->priority() < b->priority(); });
         else if (k == 2)
             sorting::quickSort(v, [](const Item* a, const Item* b) { return util::lower(a->name()) < util::lower(b->name()); });
-        else  // 3 and 4 both need the list sorted by ID
+        else 
             sorting::quickSort(v, [](const Item* a, const Item* b) { return a->id() < b->id(); });
 
         if (k == 4) {
@@ -187,7 +182,7 @@ public:
                       << " | " << it->name() << " (" << it->category() << ")\n";
     }
 
-    // ---------- menu ----------
+    
     void run() {
         const int coreOptions = 7;
         while (std::cin) {
