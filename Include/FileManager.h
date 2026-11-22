@@ -1,8 +1,8 @@
 #pragma once
 // Saves / loads all records to one text file (tab separated, one item per line).
+#include <filesystem>
 #include <fstream>
 #include <string>
-#include<filesystem>
 #include "ItemLinkedList.h"
 
 class FileManager {
@@ -12,7 +12,8 @@ public:
     explicit FileManager(std::string path = "data/items.txt") : path_(std::move(path)) {}
 
     bool save(const ItemLinkedList& list) const {
-        util::ensureParentDir(path_);
+        std::filesystem::path p(path_);
+        if (p.has_parent_path()) std::filesystem::create_directories(p.parent_path());
         std::ofstream out(path_, std::ios::trunc);
         if (!out) return false;
         for (const ListNode* n = list.head(); n; n = n->next)
