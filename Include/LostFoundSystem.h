@@ -151,6 +151,42 @@ public:
                       << " | " << it->name() << " (" << it->category() << ")\n";
     }
 
+    // Sorted views: merge sort (stable) for priority, quick sort for name / ID,
+    // and binary search, which needs the list to be sorted by ID first.
+    void sortedView() const {
+        std::vector<Item*> v;
+        for (const ListNode* p = list_.head(); p; p = p->next) v.push_back(p->item);
+        if (v.empty()) { std::cout << "No items yet.\n"; return; }
+
+        std::cout << "\n 1. By priority (merge sort)\n 2. By name A-Z (quick sort)\n"
+                  << " 3. By ID (quick sort)\n 4. Binary search an item by ID\n";
+        int k = util::readInt("Choice: ", 1, 4);
+
+        if (k == 1)
+            sorting::mergeSort(v, [](const Item* a, const Item* b) { return a->priority() < b->priority(); });
+        else if (k == 2)
+            sorting::quickSort(v, [](const Item* a, const Item* b) { return util::lower(a->name()) < util::lower(b->name()); });
+        else  // 3 and 4 both need the list sorted by ID
+            sorting::quickSort(v, [](const Item* a, const Item* b) { return a->id() < b->id(); });
+
+        if (k == 4) {
+            std::string id = util::readNonEmpty("Item ID to find: ");
+            int steps = 0;
+            int pos = sorting::binarySearch(v, id, [](const Item* a) { return a->id(); }, &steps);
+            if (pos < 0) {
+                std::cout << "Not found (" << steps << " comparisons for " << v.size() << " items).\n";
+            } else {
+                std::cout << "Found at position " << pos + 1 << " of " << v.size() << " after "
+                          << steps << " comparison(s).\n";
+                v[pos]->display();
+            }
+            return;
+        }
+        for (const Item* it : v)
+            std::cout << " " << it->id() << " | " << it->type() << " | " << priorityToString(it->priority())
+                      << " | " << it->name() << " (" << it->category() << ")\n";
+    }
+
     // ---------- menu ----------
     void run() {
         const int coreOptions = 7;
