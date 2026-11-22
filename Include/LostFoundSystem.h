@@ -13,7 +13,7 @@
 
 class LostFoundSystem {
     ItemLinkedList list_;
-    std::unordered_map<std::string, Item*> idIndex_;  
+    std::unordered_map<std::string, Item*> idIndex_;  // hash table: ID -> item (list owns the item)
     MatchingEngine engine_;
     FileManager files_;
     std::function<void(Item*)> onItemAdded_;
@@ -21,7 +21,6 @@ class LostFoundSystem {
 
 public:
     explicit LostFoundSystem(const std::string& file = "data/items.txt") : files_(file) {}
-
 
     void addMenuOption(const std::string& label, std::function<void()> fn) {
         extraMenu_.emplace_back(label, std::move(fn));
@@ -34,7 +33,6 @@ public:
         return it == idIndex_.end() ? nullptr : it->second;
     }
 
-  
     void load() {
         int n = files_.load(list_);
         for (const ListNode* p = list_.head(); p; p = p->next) idIndex_[p->item->id()] = p->item;
@@ -44,7 +42,6 @@ public:
         if (!files_.save(list_)) std::cout << "Warning: could not save items file.\n";
     }
 
-   
     Item* addItem(bool isLost) {
         std::cout << "\n--- Report a " << (isLost ? "LOST" : "FOUND") << " item ---\n";
         std::string id = util::readLine("Item ID (unique, e.g. " + std::string(isLost ? "L001" : "F001") + "): ");
@@ -71,11 +68,10 @@ public:
     void searchById() const {
         std::string id = util::readNonEmpty("Enter item ID: ");
         Item* it = findById(id);
-        if (it) it->displayPublic();
+        if (it) it->display();
         else std::cout << "No item with ID '" << id << "'.\n";
     }
 
-    // Priority queue: High first, then Medium, then Low (ties by ID).
     void priorityView() const {
         struct Cmp {
             bool operator()(const Item* a, const Item* b) const {
@@ -87,7 +83,7 @@ public:
         for (const ListNode* p = list_.head(); p; p = p->next) pq.push(p->item);
         if (pq.empty()) { std::cout << "No items yet.\n"; return; }
         std::cout << "\n--- Items by priority ---\n";
-        while (!pq.empty()) { pq.top()->displayPublic(); pq.pop(); }
+        while (!pq.empty()) { pq.top()->display(); pq.pop(); }
     }
 
     void suggestMatches() const {
@@ -101,18 +97,17 @@ public:
             std::cout << "Match score: " << static_cast<int>(r.score + 0.5) << "%";
             if (!r.note.empty()) std::cout << "  (" << r.note << ")";
             std::cout << "\n";
-            r.found->displayPublic();
+            r.found->display();
         }
     }
 
     void listAll() const {
         if (list_.size() == 0) { std::cout << "No items yet.\n"; return; }
         std::cout << "\n--- All items (" << list_.size() << ") ---\n";
-        for (const ListNode* p = list_.head(); p; p = p->next) p->item->displayPublic();
+        for (const ListNode* p = list_.head(); p; p = p->next) p->item->display();
     }
 
-    // Sorted views: merge sort (stable) for priority, quick sort for name / ID,
-    // and binary search, which needs the list to be sorted by ID first.
+ 
     void sortedView() const {
         std::vector<Item*> v;
         for (const ListNode* p = list_.head(); p; p = p->next) v.push_back(p->item);
@@ -138,41 +133,6 @@ public:
             } else {
                 std::cout << "Found at position " << pos + 1 << " of " << v.size() << " after "
                           << steps << " comparison(s).\n";
-                v[pos]->displayPublic();
-            }
-            return;
-        }
-        for (const Item* it : v)
-            std::cout << " " << it->id() << " | " << it->type() << " | " << priorityToString(it->priority())
-                      << " | " << it->name() << " (" << it->category() << ")\n";
-    }
-
-
-    void sortedView() const {
-        std::vector<Item*> v;
-        for (const ListNode* p = list_.head(); p; p = p->next) v.push_back(p->item);
-        if (v.empty()) { std::cout << "No items yet.\n"; return; }
-
-        std::cout << "\n 1. By priority (merge sort)\n 2. By name A-Z (quick sort)\n"
-                  << " 3. By ID (quick sort)\n 4. Binary search an item by ID\n";
-        int k = util::readInt("Choice: ", 1, 4);
-
-        if (k == 1)
-            sorting::mergeSort(v, [](const Item* a, const Item* b) { return a->priority() < b->priority(); });
-        else if (k == 2)
-            sorting::quickSort(v, [](const Item* a, const Item* b) { return util::lower(a->name()) < util::lower(b->name()); });
-        else 
-            sorting::quickSort(v, [](const Item* a, const Item* b) { return a->id() < b->id(); });
-
-        if (k == 4) {
-            std::string id = util::readNonEmpty("Item ID to find: ");
-            int steps = 0;
-            int pos = sorting::binarySearch(v, id, [](const Item* a) { return a->id(); }, &steps);
-            if (pos < 0) {
-                std::cout << "Not found (" << steps << " comparisons for " << v.size() << " items).\n";
-            } else {
-                std::cout << "Found at position " << pos + 1 << " of " << v.size() << " after "
-                          << steps << " comparison(s).\n";
                 v[pos]->display();
             }
             return;
@@ -182,7 +142,6 @@ public:
                       << " | " << it->name() << " (" << it->category() << ")\n";
     }
 
-    
     void run() {
         const int coreOptions = 7;
         while (std::cin) {
