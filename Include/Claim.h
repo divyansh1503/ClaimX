@@ -1,11 +1,8 @@
 #pragma once
-
 #include <string>
 #include <vector>
 #include "Utils.h"
-
 enum class ClaimStatus { PENDING, FLAGGED, APPROVED, REJECTED };
-
 inline std::string claimStatusToString(ClaimStatus s) {
     switch (s) {
         case ClaimStatus::PENDING:  return "PENDING";   
@@ -14,14 +11,12 @@ inline std::string claimStatusToString(ClaimStatus s) {
         default:                    return "REJECTED";
     }
 }
-
 inline ClaimStatus claimStatusFromString(const std::string& s) {
     if (s == "PENDING") return ClaimStatus::PENDING;
     if (s == "FLAGGED") return ClaimStatus::FLAGGED;
     if (s == "APPROVED") return ClaimStatus::APPROVED;
     return ClaimStatus::REJECTED;
 }
-
 struct Claim {
     std::string id;       
     std::string itemId;  
@@ -31,14 +26,11 @@ struct Claim {
     int similarityPct = 0;  
     int seq = 0;           
     std::string adminNote;
-
     bool isOpen() const { return status == ClaimStatus::PENDING || status == ClaimStatus::FLAGGED; }
-
     std::string serialize() const {
         return id + "\t" + itemId + "\t" + claimant + "\t" + answer + "\t" + claimStatusToString(status) +
                "\t" + std::to_string(similarityPct) + "\t" + std::to_string(seq) + "\t" + adminNote;
     }
-
     static bool parse(const std::string& line, Claim& c) {
         auto f = util::split(line, '\t');
         if (f.size() < 7) return false;
